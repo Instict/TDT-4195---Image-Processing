@@ -34,6 +34,7 @@ plt.figure()
 plt.plot(xs, ys, linestyle='dashed', color='black')
 plt.show()
 
+
 normal = lambda xs, mu, sigma: np.exp(-(xs - mu)**2 / (2 * sigma**2)) / np.sqrt(2 * np.pi * sigma**2)
 xs = np.linspace(-5, 5, 100)
 plt.figure()
