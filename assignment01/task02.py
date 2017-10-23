@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 from scipy import misc
 from PIL import Image
 
@@ -11,6 +10,7 @@ plt.figure(1)
 plt.title('Using matplotlib')
 plt.imshow(image, interpolation='nearest')
 plt.show()
+
 
 #	loaded using NumPy array using PIL
 img = Image.open('./lochness.tiff')
