@@ -26,13 +26,24 @@ def weightedAverage(rgb):
 			sum += rgb[i, j, 2]*luminance[2]
 			rgb[i, j] = [sum, sum, sum]
 	return rgb
-image = misc.imread('./images/4.1.07-jelly-beans.tiff')
+#	converting images
+image = misc.imread('./images/4.2.06-lake.tiff')
 averageImage = average(image)
-image = misc.imread('./images/4.1.07-jelly-beans.tiff')
+image = misc.imread('./images/4.2.06-lake.tiff')
 weightedAverageImage = weightedAverage(image)
-image = misc.imread('./images/4.1.07-jelly-beans.tiff')
+image = misc.imread('./images/4.2.06-lake.tiff')
 originalImage = image
-
+#	plots
+plt.imshow(originalImage)
+plt.axis('off')
+plt.show()
+plt.imshow(averageImage)
+plt.axis('off')
+plt.show()
+plt.imshow(weightedAverageImage)
+plt.axis('off')
+plt.show()
+#	subplots
 _, ax = plt.subplots(1, 3, figsize=(16, 8))
 ax[2].imshow(originalImage)
 ax[2].set_axis_off()
