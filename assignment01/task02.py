@@ -5,34 +5,39 @@ import matplotlib.image as mpimg
 from scipy import misc
 from PIL import Image
 
-
-#	load an image an display it using matplotlib
-image = misc.imread('./lochness.tiff')
-
 #	greyscale conversion
 def average(rgb):
-	return ((rgb[0] + rgb[1] + rgb[2]) / 3)
-
+	for i in range(len(rgb)):
+		for j in range(len(rgb[i])):
+			sum = 0
+			sum += rgb[i, j, 0]
+			sum += rgb[i, j, 1]
+			sum += rgb[i, j, 2]
+			averageColor = sum/3
+			rgb[i, j] = [averageColor, averageColor, averageColor]
+	return rgb
 def weightedAverage(rgb):
-	return 0.2125*rgb[0] + 0.7152*rgb[1] + 0.0722*rgb[2]
+	for i in range(len(rgb)):
+		for j in range(len(rgb[i])):
+			sum = 0
+			luminance = [0.2126, 0.7152, 0.0722]
+			sum += rgb[i, j, 0]*luminance[0]
+			sum += rgb[i, j, 1]*luminance[1]
+			sum += rgb[i, j, 2]*luminance[2]
+			rgb[i, j] = [sum, sum, sum]
+	return rgb
+image = misc.imread('./images/4.1.07-jelly-beans.tiff')
+averageImage = average(image)
+image = misc.imread('./images/4.1.07-jelly-beans.tiff')
+weightedAverageImage = weightedAverage(image)
+image = misc.imread('./images/4.1.07-jelly-beans.tiff')
+originalImage = image
 
-greyAverage = np.zeros((image.shape[0], image.shape[1])) # init 2D numpy array
-greyWeightedAverage = np.zeros((image.shape[0], image.shape[1])) # init 2D numpy array
-# get row number
-for rownum in range(len(image)):
-	for colnum in range(len(image[rownum])):
-		greyAverage[rownum][colnum] = average(image[rownum][colnum])
-		greyWeightedAverage[rownum][colnum] = weightedAverage(image[rownum][colnum])
-
-		
-#plt.figure(1)
-#plt.title('Using matplotlib')
-#plt.imshow(grey, cmap = plt.cm.Greys_r)
-#plt.show()
-
-_, ax = plt.subplots(1, 2, figsize=(16, 8))
-ax[0].imshow(greyAverage, cmap = plt.cm.Greys_r)  # Red colour map
+_, ax = plt.subplots(1, 3, figsize=(16, 8))
+ax[2].imshow(originalImage)
+ax[2].set_axis_off()
+ax[0].imshow(averageImage)
 ax[0].set_axis_off()
-ax[1].imshow(greyWeightedAverage, cmap = plt.cm.Greys_r)  # Red colour map
+ax[1].imshow(weightedAverageImage)
 ax[1].set_axis_off()
 plt.show()
