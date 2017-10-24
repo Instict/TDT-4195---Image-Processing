@@ -9,22 +9,22 @@ from PIL import Image
 def average(rgb):
 	for i in range(len(rgb)):
 		for j in range(len(rgb[i])):
-			sum = 0
-			sum += rgb[i, j, 0]
-			sum += rgb[i, j, 1]
-			sum += rgb[i, j, 2]
-			averageColor = sum/3
-			rgb[i, j] = [averageColor, averageColor, averageColor]
+			grey = 0
+			grey += rgb[i, j, 0]
+			grey += rgb[i, j, 1]
+			grey += rgb[i, j, 2]
+			avgColor = grey/3
+			rgb[i, j] = [avgColor, avgColor, avgColor]
 	return rgb
 def weightedAverage(rgb):
 	for i in range(len(rgb)):
 		for j in range(len(rgb[i])):
-			sum = 0
+			grey = 0
 			luminance = [0.2126, 0.7152, 0.0722]
-			sum += rgb[i, j, 0]*luminance[0]
-			sum += rgb[i, j, 1]*luminance[1]
-			sum += rgb[i, j, 2]*luminance[2]
-			rgb[i, j] = [sum, sum, sum]
+			grey += rgb[i, j, 0]*luminance[0]
+			grey += rgb[i, j, 1]*luminance[1]
+			grey += rgb[i, j, 2]*luminance[2]
+			rgb[i, j] = [grey, grey, grey]
 	return rgb
 #	converting images
 image = misc.imread('./images/4.2.06-lake.tiff')
