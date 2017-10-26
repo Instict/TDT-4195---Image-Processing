@@ -5,11 +5,11 @@ from PIL import Image
 
 #	create a dictionary for easier filepath handling
 imagePath = { 'aerial' : './images/5.1.10-aerial.tiff',
-			'jellyBeans' : './images/4.1.07-jelly-beans.tiff',
-			'lake' : './images/4.2.06-lake.tiff',
-			'fishingBoat' : './images/fishingboat.tiff',
-			'lochness' : './images/fishingboat.tiff',
-			'terraux' : './images/terraux.tiff'}
+		'jellyBeans' : './images/4.1.07-jelly-beans.tiff',
+		'lake' : './images/4.2.06-lake.tiff',
+		'fishingBoat' : './images/fishingboat.tiff',
+		'lochness' : './images/fishingboat.tiff',
+		'terraux' : './images/terraux.tiff'}
 
 #	intensity transformations
 def intensity(grayscale):
