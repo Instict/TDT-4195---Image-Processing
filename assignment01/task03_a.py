@@ -3,6 +3,7 @@ import matplotlib.cm as cm #
 from scipy import misc
 from PIL import Image
 
+#	create a dictionary for easier filepath handling
 imagePath = { 'aerial' : './images/5.1.10-aerial.tiff',
 			'jellyBeans' : './images/4.1.07-jelly-beans.tiff',
 			'lake' : './images/4.2.06-lake.tiff',
@@ -11,21 +12,30 @@ imagePath = { 'aerial' : './images/5.1.10-aerial.tiff',
 			'terraux' : './images/terraux.tiff'}
 
 #	intensity transformations
-def intensity(rgb):
-	for i in range(len(rgb)):
-		for j in range(len(rgb[i])):
-			p = rgb[i, j]
+def intensity(grayscale):
+#	loop through the colors
+	for i in range(len(grayscale)):
+		for j in range(len(grayscale[i])):
+		#	save original image
+			p = grayscale[i, j]
+		#	p_k is the highest value a pixel can have
 			p_k = 255
-			rgb[i, j] = p_k - p
-	return rgb
+		#	use formula T(p)=p_k-p and update the colors
+			grayscale[i, j] = p_k - p
+	return grayscale
 
+#	create function to plot and modify the image
 def plotImage(filepath):
+#	read image
 	image = misc.imread(filepath)
 	intensityImage = intensity(image)
+#	show image in plot, using gray color map 
 	plt.imshow(intensityImage, cmap=plt.cm.gray)
 	plt.axis('off')
 	plt.show()
 	return None
+	
+#	create function for comparing original and modified image
 def subplotImage(filepath):
 	_, ax = plt.subplots(1, 2, figsize=(16, 8))
 	originalImage = misc.imread(filepath)
@@ -37,5 +47,6 @@ def subplotImage(filepath):
 	plt.show()
 	return None
 	
+#	create two plots for the image
 plotImage(imagePath['aerial'])
 subplotImage(imagePath['aerial'])
