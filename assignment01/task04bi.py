@@ -47,7 +47,7 @@ def spatialConvolution(inputImage, kernel):
 			
 	return outputImage
 
-avaraging3x3kernel =  (1 / 9) * np.array([
+averaging3x3kernel =  (1 / 9) * np.array([
   [1, 1, 1],
   [1, 1, 1],
   [1, 1, 1]
@@ -76,3 +76,4 @@ def subplotImage(filepath):
 	return None
 	
 subplotImage(imagePath['fishingBoat'])
+

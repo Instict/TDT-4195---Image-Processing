@@ -12,15 +12,20 @@ imagePath = { 'aerial' : './images/5.1.10-aerial.tiff',
 			'lochness' : './images/lochness.tiff',
 			'terraux' : './images/terraux.tiff'}
 
+
+
+
+# The main function for applying a filter to an 2d-rgb-array
 def spatialConvolution(inputImage, kernel):
+	#inputImage = inputImage.astype('float32') # Convert to float to avoid overflow issues
 	inputImage = np.array(inputImage)
-	outputImage = np.array(inputImage) 
+	outputImage = np.array(inputImage) # Create a copy which can be modified
 	(imageHeight, imageWidth, channele) = inputImage.shape
 
-	kernelWidth = len(kernel[0])
-	centerKernelWidth = int(np.floor(kernelWidth / 2)) 
-	kernelHeight = len(kernel) 
-	centerKernelHeight = int(np.floor(kernelHeight / 2)) 
+	kernelWidth = len(kernel[0]) # Width of kernel
+	centerKernelWidth = int(np.floor(kernelWidth / 2)) # Center width of kernel
+	kernelHeight = len(kernel) # Height of kernel
+	centerKernelHeight = int(np.floor(kernelHeight / 2)) # Center height of kernel
 	
 	
 	
@@ -67,18 +72,17 @@ gaussian5x5Kernel =  (1 / 256) * np.array([
   [1, 4, 6, 4, 1]
 ])
 
-def subplotImage(filepath):
-	_, ax = plt.subplots(1, 3, figsize=(16, 8))
-	originalImage = misc.imread(filepath)
-	ax[0].imshow(originalImage, cmap='gray')
-	ax[0].set_axis_off()
-	avaragingImage = spatialConvolution(misc.imread(filepath), avaraging3x3kernel)
-	ax[1].imshow(avaragingImage, cmap='gray')
-	ax[1].set_axis_off()
-	gaussianImage = spatialConvolution(misc.imread(filepath), gaussian5x5Kernel)
-	ax[2].imshow(gaussianImage, cmap='gray')
-	ax[2].set_axis_off()
-	plt.show()
-	return None
-	
-subplotImage(imagePath['lochness'])
+_, ax = plt.subplots(1, 3, figsize=(16, 8))
+image = misc.imread(imagePath['lake'])
+originalImage = image
+ax[0].imshow(originalImage)
+ax[0].set_axis_off()
+image = misc.imread(imagePath['lake'])
+averagingImage = spatialConvolution(image, averaging3x3kernel)
+ax[1].imshow(averagingImage)
+ax[1].set_axis_off()
+image = misc.imread(imagePath['lake'])
+gaussianImage = spatialConvolution(image, gaussian5x5Kernel)
+ax[2].imshow(gaussianImage)
+ax[2].set_axis_off()
+plt.show()
