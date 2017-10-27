@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import misc
 
-image = misc.imread('./images/4.1.07-jelly-beans.tiff')
+image = misc.imread('./images/fishingboat.tiff')
 #image = misc.imread('./images/rainbow.tiff')
 #image = misc.imread('./images/lochness.tiff')
 #image = misc.imread('./images/doge.tiff')
@@ -13,7 +13,7 @@ image = misc.imread('./images/4.1.07-jelly-beans.tiff')
 def spatialConvolution(inputImage, kernel):
   inputImage = inputImage.astype('float32') # Convert to float to avoid overflow issues
   outputImage = np.array(inputImage) # Create a copy which can be modified
-  (imgHeight, imgWidth, channels) = inputImage.shape
+  (imgHeight, imgWidth) = inputImage.shape
 
   w = len(kernel[0]) # Width of kernel
   cw = int((w - 1) / 2) # Center width of kernel
@@ -35,10 +35,10 @@ def spatialConvolution(inputImage, kernel):
           #  sr += r; sg += g; sb += b
 
           # Make use of the closest available pixel from beyond the edges
-          r, g, b = inputImage[max(0, min(imgHeight - 1, y - ly))][max(0, min(imgWidth - 1, x - lx))][0:3] * kernel[ky][kx]
-          sr += r; sg += g; sb += b
+          r = inputImage[max(0, min(imgHeight - 1, y - ly))][max(0, min(imgWidth - 1, x - lx))] * kernel[ky][kx]
+          sr += r
 
-      outputImage[y][x][0:3] = [sr, sg, sb]
+      outputImage[y][x] = sr
 
   return outputImage
 
@@ -54,18 +54,19 @@ def normalizeKernel(kernel):
 
 
 # Our better grey function from task 2
-def grey(img):
-  img = np.array(img)
-  r = img[..., 0]
-  g = img[..., 1]
-  b = img[..., 2]
+def grey(image):
+	img = image
+	img = np.array(img)
+	r = img[..., 0]
+	g = img[..., 1]
+	b = img[..., 2]
 
-  avgGrey = (r * 0.2126 + g * 0.7152 + b * 0.0722)
+	avgGrey = (r * 0.2126 + g * 0.7152 + b * 0.0722)
 
-  img[..., 0] = avgGrey
-  img[..., 1] = avgGrey
-  img[..., 2] = avgGrey
-  return img
+	img[..., 0] = avgGrey
+	img[..., 1] = avgGrey
+	img[..., 2] = avgGrey
+	return image
 
 
 # List of useful filters. They should be described by their names. They are also normalized if necessary.
@@ -148,8 +149,8 @@ def normalize(inputImage):
 
 # Generate a image with the sobel filter
 # Notice the absolute conversion. That is why the background is black instead of an average grey
-imgX = normalize(np.absolute(spatialConvolution(greyImage, sobelX)))
-imgY = normalize(np.absolute(spatialConvolution(greyImage, sobelY)))
+imgX = normalize((spatialConvolution(greyImage, sobelX)))
+imgY = normalize((spatialConvolution(greyImage, sobelY)))
 
 # Adding the sobel filters together
 img = normalize(np.sqrt(np.power(imgX, 2) + np.power(imgY, 2)))
@@ -158,15 +159,15 @@ img = normalize(np.sqrt(np.power(imgX, 2) + np.power(imgY, 2)))
 _, ax = plt.subplots(1, 3, figsize=(30, 16))
 
 # Original image
-ax[0].imshow(image)
+ax[0].imshow(imgX, cmap='gray')
 ax[0].set_axis_off()
 
 # Display a smoothed image with gauss on out grey scaled image
-ax[1].imshow(applyFilter(greyImage, gauss5x5))
+ax[1].imshow(imgY, cmap='gray')
 ax[1].set_axis_off()
 
 # Display the image with the absolute of both sobel filters added together
-ax[2].imshow(img)
+ax[2].imshow(img, cmap='gray')
 ax[2].set_axis_off()
 
 plt.show()
