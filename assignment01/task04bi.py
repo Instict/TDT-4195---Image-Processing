@@ -47,7 +47,7 @@ def spatialConvolution(inputImage, kernel):
 			
 	return outputImage
 
-avaraging3x3kernel =  (1 / 9) * np.array([
+averaging3x3kernel =  (1 / 9) * np.array([
   [1, 1, 1],
   [1, 1, 1],
   [1, 1, 1]
@@ -62,12 +62,17 @@ gaussian5x5Kernel =  (1 / 256) * np.array([
 ])
 
 _, ax = plt.subplots(1, 3, figsize=(16, 8))
+image = misc.imread(imagePath['aerial'])
+originalImage = image
 ax[0].imshow(originalImage, cmap='gray')
 ax[0].set_axis_off()
-avaragingImage = spatialConvolution(originalImage, avaraging3x3kernel)
-ax[1].imshow(avaragingImage, cmap='gray')
+image = misc.imread(imagePath['aerial'])
+averagingImage = spatialConvolution(originalImage, averaging3x3kernel)
+ax[1].imshow(averagingImage, cmap='gray')
 ax[1].set_axis_off()
-gaussianImage = spatialConvolution(originalImage, avaraging3x3kernel)
+image = misc.imread(imagePath['aerial'])
+gaussianImage = spatialConvolution(originalImage, gaussian5x5Kernel)
 ax[2].imshow(gaussianImage, cmap='gray')
 ax[2].set_axis_off()
 plt.show()
+

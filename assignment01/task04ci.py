@@ -12,15 +12,20 @@ imagePath = { 'aerial' : './images/5.1.10-aerial.tiff',
 			'lochness' : './images/lochness.tiff',
 			'terraux' : './images/terraux.tiff'}
 
+
+
+
+# The main function for applying a filter to an 2d-rgb-array
 def spatialConvolution(inputImage, kernel):
+	#inputImage = inputImage.astype('float32') # Convert to float to avoid overflow issues
 	inputImage = np.array(inputImage)
-	outputImage = np.array(inputImage) 
+	outputImage = np.array(inputImage) # Create a copy which can be modified
 	(imageHeight, imageWidth, channele) = inputImage.shape
 
-	kernelWidth = len(kernel[0])
-	centerKernelWidth = int(np.floor(kernelWidth / 2)) 
-	kernelHeight = len(kernel) 
-	centerKernelHeight = int(np.floor(kernelHeight / 2)) 
+	kernelWidth = len(kernel[0]) # Width of kernel
+	centerKernelWidth = int(np.floor(kernelWidth / 2)) # Center width of kernel
+	kernelHeight = len(kernel) # Height of kernel
+	centerKernelHeight = int(np.floor(kernelHeight / 2)) # Center height of kernel
 	
 	
 	
