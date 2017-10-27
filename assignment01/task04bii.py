@@ -72,7 +72,7 @@ def subplotImage(filepath):
 	originalImage = misc.imread(filepath)
 	ax[0].imshow(originalImage, cmap='gray')
 	ax[0].set_axis_off()
-	avaragingImage = spatialConvolution(misc.imread(filepath), avaraging3x3kernel)
+	avaragingImage = spatialConvolution(misc.imread(filepath), averaging3x3kernel)
 	ax[1].imshow(avaragingImage, cmap='gray')
 	ax[1].set_axis_off()
 	gaussianImage = spatialConvolution(misc.imread(filepath), gaussian5x5Kernel)

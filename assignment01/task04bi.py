@@ -10,9 +10,6 @@ imagePath = { 'aerial' : './images/5.1.10-aerial.tiff',
 			'lochness' : './images/lochness.tiff',
 			'terraux' : './images/terraux.tiff'}
 
-originalImage = misc.imread('./images/fishingboat.tiff')
-originalImage 
-
 
 def spatialConvolution(inputImage, kernel):
 	inputImage = np.array(inputImage)
@@ -23,8 +20,6 @@ def spatialConvolution(inputImage, kernel):
 	centerKernelWidth = int(np.floor(kernelWidth / 2)) 
 	kernelHeight = len(kernel) 
 	centerKernelHeight = int(np.floor(kernelHeight / 2)) 
-	
-	
 	
 	for y in range(imageHeight):
 		for x in range(imageWidth):
@@ -66,7 +61,7 @@ def subplotImage(filepath):
 	originalImage = misc.imread(filepath)
 	ax[0].imshow(originalImage, cmap='gray')
 	ax[0].set_axis_off()
-	avaragingImage = spatialConvolution(misc.imread(filepath), avaraging3x3kernel)
+	avaragingImage = spatialConvolution(misc.imread(filepath), averaging3x3kernel)
 	ax[1].imshow(avaragingImage, cmap='gray')
 	ax[1].set_axis_off()
 	gaussianImage = spatialConvolution(misc.imread(filepath), gaussian5x5Kernel)
@@ -76,4 +71,3 @@ def subplotImage(filepath):
 	return None
 	
 subplotImage(imagePath['fishingBoat'])
-
