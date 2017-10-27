@@ -14,11 +14,10 @@ def subplotImage(filepath):
 	avaragingImage = spatialConvolution(misc.imread(filepath), avaraging3x3kernel)
 	ax[1].imshow(avaragingImage, cmap='gray')
 	ax[1].set_axis_off()
-	gaussianImage = spatialConvolution(misc.imread(filepath), gaussian5x5Kernel )
+	gaussianImage = spatialConvolution(misc.imread(filepath), gaussian5x5Kernel)
 	ax[2].imshow(gaussianImage, cmap='gray')
 	ax[2].set_axis_off()
 	plt.show()
 	return None
 	
-subplotImage(imagePath['fishingBoat'])
-subplotImage(imagePath['aerial'])
+subplotImage(imagePath['lochness'])
