@@ -20,14 +20,6 @@ kernel_highpass_3x3 = (1/9) * np.array([
 	[-1, -1, -1]], dtype=np.float32)
 
 
-kernel_highpass_5x5 = np.array([
-	[-1, -1, -1, -1, -1],
-	[-1,  1,  2,  1, -1],
-	[-1,  2,  4,  2, -1],
-	[-1,  1,  2,  1, -1],
-	[-1, -1, -1, -1, -1]])
-
-
 kernel_lowpass_5x5 = (1/256) * np.array([
   [1, 4, 6, 4, 1],
   [4, 16, 24, 16, 4],
@@ -69,31 +61,43 @@ def frequency2SpatialDomain(G):
 	for y in range (ySize//2):
 		for x in range (xSize//2):
 			g[y,x] = g_p[y,x]
-	return (g, g_p)
+	return g
 
 
 image = misc.imread(imagePath['fishingBoat'])
 image = np.array(image, dtype=float)
-kernel = kernel_highpass_3x3
+kernel = kernel_lowpass_5x5
 
 (F, H) = spatial2FrequencyDomain(image,kernel)
 G = F * H
-g, g_p = frequency2SpatialDomain(G)
+g = frequency2SpatialDomain(G)
 
-plt.subplot(321)
+plt.subplot(121)
+plt.axis('off')
 plt.title('original image')
 plt.imshow(image, cmap = 'gray')
-plt.subplot(322)
+plt.subplot(122)
+plt.axis('off')
 plt.title('Filtered Image')
 plt.imshow(g, cmap = 'gray')
-plt.subplot(232)
-plt.title('Image frequancy domain (F)')
-plt.imshow(np.log(1+np.abs(F)), cmap = 'gray')
-plt.subplot(233)
-plt.title('Kernel frequency domain (H)')
-plt.imshow(np.log(1+np.abs(H)), cmap = 'gray')
+plt.show()
 
-plt.subplot(235)
-plt.title('g_p')
+plt.subplot(121)
+plt.axis('off')
+plt.title('Spectrum original')
+plt.imshow(np.log(1+np.abs(F)), cmap = 'gray')
+plt.subplot(122)
+plt.axis('off')
+plt.title('Spectrum filtered')
 plt.imshow(np.log(1+np.abs(G)) , cmap = 'gray')
+plt.show()
+
+plt.subplot(121)
+plt.axis('off')
+plt.title('Kernel spatial')
+plt.imshow(kernel, cmap = 'gray')
+plt.subplot(122)
+plt.axis('off')
+plt.title('Kernel frequency')
+plt.imshow(np.log(1+np.abs(H)), cmap = 'gray')
 plt.show()
