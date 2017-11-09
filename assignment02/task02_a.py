@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import misc
-from scipy import ndimage
 from PIL import Image
 
 #	create a dictionary for easier filepath handling
@@ -14,35 +13,12 @@ imagePath = {'jellyBeans' : './images/4.1.07-jelly-beans.tiff',
 			'opera' : './images/opera.tiff',
 			'aerial' : './images/5.1.10-aerial.tiff'}
 
-
-def spatialConvolution(inputImage, kernel):
-	outputImage = np.array(inputImage, dtype=np.float32)
-	(imageHeight, imageWidth) = inputImage.shape
-	kernelWidth = len(kernel[0])
-	centerKernelWidth = int(np.floor(kernelWidth / 2))
-	kernelHeight = len(kernel)
-	centerKernelHeight = int(np.floor(kernelHeight / 2))
-	for y in range(imageHeight):
-		for x in range(imageWidth):
-			sum = 0
-			for ky in range(kernelHeight):
-				for kx in range(kernelWidth):
-					nx = kx - centerKernelHeight
-					ny = ky - centerKernelWidth
-					currentPixelX = x + nx
-					currentPixelY = y + ny
-					if 0 <= currentPixelX < imageWidth and 0 <= currentPixelY < imageHeight:
-						level = inputImage[currentPixelY] [currentPixelX] * kernel[ky][kx]
-						sum += level
-			outputImage[y][x] = sum
-	return outputImage
-
-
 # A very simple and very narrow highpass filter
-kernel_highpass_3x3 = np.array([
+kernel_highpass_3x3 = (1/9) * np.array([
 	[-1, -1, -1],
 	[-1,  8, -1],
 	[-1, -1, -1]], dtype=np.float32)
+
 
 kernel_highpass_5x5 = np.array([
 	[-1, -1, -1, -1, -1],
@@ -52,76 +28,72 @@ kernel_highpass_5x5 = np.array([
 	[-1, -1, -1, -1, -1]])
 
 
-def zeroFrequencyComponent(inputImage):
-	f = np.fft.fft2(inputImage)
-	fshift = np.fft.fftshift(f)
-	magnitude_spectrum = 20*np.log(np.abs(fshift))
-	return magnitude_spectrum
+kernel_lowpass_5x5 = (1/256) * np.array([
+  [1, 4, 6, 4, 1],
+  [4, 16, 24, 16, 4],
+  [6, 24, 36, 24, 6],
+  [4, 16, 24, 16, 4],
+  [1, 4, 6, 4, 1]])
 
 
-def frequencyDomainFiltering(inputImage):
-	f = np.fft.fft2(inputImage)
-	fshift = np.fft.fftshift(f)
-	rows, cols = inputImage.shape
-	crow,ccol = rows/2, cols/2
-	fshift[crow-30:crow+30, ccol-30:ccol+30] = 0
-	f_ishift = np.fft.ifftshift(fshift)
-	img_back = np.fft.ifft2(f_ishift)
-	img_back = np.abs(img_back)
-	return img_back
+def spatial2FrequencyDomain(image, kernel):
+	#Find dim of image
+	ySize = np.size(image,0)
+	xSize = np.size(image,1)
+	#Padd the image
+	image = np.lib.pad(image, ((ySize,0), (xSize,0)), 'constant', constant_values=(0, 0))
+	kernelSize = np.size(kernel,0)
+	kernel = np.lib.pad(kernel, ((ySize-(kernelSize//2),ySize-(kernelSize//2)-1), (xSize-(kernelSize//2), xSize-(kernelSize//2)-1)), 'constant', constant_values=(0, 0))
+	#Centering
+	for y in range (2*ySize):
+		for x in range (2*xSize):
+			image[y,x]=image[y,x]*np.power(-1,x+y)
+			kernel[y,x]=kernel[y,x]*np.power(-1,x+y)
+	#Converting to frequency domain
+	F = np.fft.fft2(image)
+	H = np.fft.fft2(kernel)
+	return(F, H)
 
 
-def subplot(filePath, kernel):
-	# ndConvolve = ndimage.convolve(misc.imread(filePath), kernel)
-	# transformedImage = spatialConvolution(misc.imread(filePath), kernel)
-	plt.subplot(121)
-	plt.title("original image")
-	plt.imshow(misc.imread(filePath), cmap = 'gray')
-	plt.axis('off')
-	plt.subplot(122)
-	magnitude_spectrum = zeroFrequencyComponent(misc.imread(filePath))
-	plt.title('magnitude_spectrum')
-	plt.imshow(magnitude_spectrum, cmap = 'gray')
-	plt.axis('off')
-	# plt.subplot(223)
-	# filteredImage = frequencyDomainFiltering(misc.imread(filePath))
-	# plt.title('high pass filtered')
-	# plt.imshow(filteredImage)
-	plt.show()
-	return None
+def frequency2SpatialDomain(G):
+	ySize = np.size(G,0)
+	xSize = np.size(G,1)
+	g = np.zeros((ySize//2, xSize//2))
+	g_p = np.fft.ifft2(G)
+	g_p = np.real(g_p)
+	#Centering
+	for y in range (ySize):
+		for x in range (xSize):
+			g_p[y,x]=g_p[y,x]*np.power(-1,x+y)
+	#Restore padded image
+	for y in range (ySize//2):
+		for x in range (xSize//2):
+			g[y,x] = g_p[y,x]
+	return (g, g_p)
 
-# subplot(imagePath['fishingBoat'], kernel_highpass_3x3)
-subplot(imagePath['fishingBoat'], kernel_highpass_5x5)
-#plt.imshow(frequencyDomainFiltering(image,kernel_highpass_3x3))
 
-# def gaussian(size=3, std=1.0):
-#     s = (size - 1) // 2
-#     h = np.linspace(-s, s, size)
-#     h = np.exp(-h**2 / (2 * std**2))
-#     h = h * h[np.newaxis, :].T
-#     sumh = h.sum()
-#     if 0.0 != sumh:
-#         h /= sumh
-#     return h
-# print(kernel_highpass_3x3.shape)
-# print(kernel_highpass_3x3.size)
-# plt.figure()
-# plt.subplot(141)
-# plt.gray()
-# plt.imshow(gaussian())
-# plt.axis('off')
-# plt.subplot(142)
-# plt.gray()
-# plt.imshow(gaussian(5, 2.0))
-# plt.axis('off')
-# plt.subplot(143)
-# plt.gray()
-# plt.imshow(gaussian(16, 2.0))
-# plt.axis('off')
-# plt.subplot(144)
-# plt.gray()
-# plt.imshow(gaussian(128, 20.0))
-# plt.axis('off')
-# plt.tight_layout()
-# plt.show()
-# subplotImage(imagePath['fishingBoat'])
+image = misc.imread(imagePath['fishingBoat'])
+image = np.array(image, dtype=float)
+kernel = kernel_highpass_3x3
+
+(F, H) = spatial2FrequencyDomain(image,kernel)
+G = F * H
+g, g_p = frequency2SpatialDomain(G)
+
+plt.subplot(321)
+plt.title('original image')
+plt.imshow(image, cmap = 'gray')
+plt.subplot(322)
+plt.title('Filtered Image')
+plt.imshow(g, cmap = 'gray')
+plt.subplot(232)
+plt.title('Image frequancy domain (F)')
+plt.imshow(np.log(1+np.abs(F)), cmap = 'gray')
+plt.subplot(233)
+plt.title('Kernel frequency domain (H)')
+plt.imshow(np.log(1+np.abs(H)), cmap = 'gray')
+
+plt.subplot(235)
+plt.title('g_p')
+plt.imshow(np.log(1+np.abs(G)) , cmap = 'gray')
+plt.show()
