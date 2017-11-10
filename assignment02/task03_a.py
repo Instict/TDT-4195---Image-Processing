@@ -20,14 +20,6 @@ kernel_highpass_3x3 = (1/9) * np.array([
 	[-1, -1, -1]], dtype=np.float32)
 
 
-kernel_highpass_5x5 = np.array([
-	[-1, -1, -1, -1, -1],
-	[-1,  1,  2,  1, -1],
-	[-1,  2,  4,  2, -1],
-	[-1,  1,  2,  1, -1],
-	[-1, -1, -1, -1, -1]])
-
-
 kernel_Gausian_5x5 = (1/256) * np.array([
   [1, 4, 6, 4, 1],
   [4, 16, 24, 16, 4],
@@ -72,46 +64,60 @@ def frequency2SpatialDomain(G):
 	return g
 
 def unsharpning_kernel(kernel):
-	#Finner størrelsen på array
+	# Find size of array
 	size = np.size(kernel,0)
-	#Lager 1 tallet som skal vare i mitten av impulsen
+	# set number 1 to be center of the impulse
 	impuls = np.array([[1]])
-	#Padder den med nuller slik at den blir like stor som kernelen
+	# pad with zeroes
 	impuls = np.lib.pad(impuls, ((size//2,size//2), (size//2, size//2)), 'constant', constant_values=(0, 0))
-	#MATH
+	# MATH
 	kernel = impuls + (impuls - kernel)
 	return kernel
 
-#Her kjore eg programmet
 
-image = misc.imread('images/fishingboat.tiff')
+# use scipy to read image
+image = misc.imread(imagePath['fishingBoat'])
 image = np.array(image, dtype=float)
+# save original image
 original_image = image
+# set which kernel we want to use
 kernel = kernel_Gausian_5x5
+# run unsharpning_kernel function on the kernel
 kernel = unsharpning_kernel(kernel)
+# convert to frequency domain
 (F, H) = spatial2FrequencyDomain(image, kernel)
-G = H*F
-(g) = frequency2SpatialDomain(G)
+# do math
+G = H * F
+# convert to spatial domain
+g = frequency2SpatialDomain(G)
 
-plt.subplot(131)
-plt.gray()
+# plot
+plt.subplot(121)
+plt.axis('off')
 plt.title('Original image')
-plt.imshow(original_image)
-plt.subplot(132)
-plt.gray()
-plt.title('Sharp image')
-plt.imshow(g)
+plt.imshow(image, cmap = 'gray')
+plt.subplot(122)
+plt.axis('off')
+plt.title('Filtered Image')
+plt.imshow(g, cmap = 'gray')
+plt.show()
 
-# Samanlikne med smooth
-image = misc.imread('images/fishingboat.tiff')
-image = np.array(image, dtype=float)
-kernel = kernel_Gausian_5x5
-(F, H) = spatial2FrequencyDomain(image, kernel)
-G = H*F
-(g2) = frequency2SpatialDomain(G)
+plt.subplot(121)
+plt.axis('off')
+plt.title('Spectrum original')
+plt.imshow(np.log(1+np.abs(F)), cmap = 'gray')
+plt.subplot(122)
+plt.axis('off')
+plt.title('Spectrum filtered')
+plt.imshow(np.log(1+np.abs(G)) , cmap = 'gray')
+plt.show()
 
-plt.subplot(133)
-plt.gray()
-plt.title('Sharp image')
-plt.imshow(g2)
+plt.subplot(121)
+plt.axis('off')
+plt.title('Kernel spatial')
+plt.imshow(kernel, cmap = 'gray')
+plt.subplot(122)
+plt.axis('off')
+plt.title('Kernel frequency')
+plt.imshow(np.log(1+np.abs(H)), cmap = 'gray')
 plt.show()

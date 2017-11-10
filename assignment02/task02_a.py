@@ -64,14 +64,19 @@ def frequency2SpatialDomain(G):
 	return g
 
 
+# use scipy to read image
 image = misc.imread(imagePath['fishingBoat'])
 image = np.array(image, dtype=float)
+# set which kernel we want to use
 kernel = kernel_lowpass_5x5
-
+# convert to frequency domain
 (F, H) = spatial2FrequencyDomain(image,kernel)
+# do math
 G = F * H
+# convert to spatial domain
 g = frequency2SpatialDomain(G)
 
+# plot
 plt.subplot(121)
 plt.axis('off')
 plt.title('original image')
