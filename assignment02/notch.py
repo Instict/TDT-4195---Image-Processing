@@ -17,10 +17,16 @@ image = np.array(image, dtype=np.float32)
 
 spec_orig = np.fft.fft2(image)
 spec_img = np.fft.fftshift(spec_orig)
+misc.imsave('./images/sprecterNoise.tiff', np.log(1+np.abs(spec_img)))
 
-for j in range(115,125):
-    for n in range(96,106):
-        spec_img[n,j] = 0
+for x in range(552,576):
+	for y in range(384,386):
+		spec_img[y,x] = 0
+
+for x in range(450,474):
+	for y in range(384,386):
+		spec_img[y,x] = 0
+
 
 def frequency2SpatialDomain(G):
 	ySize = np.size(G,0)
@@ -45,5 +51,9 @@ plt.subplot(133)
 plt.axis('off')
 plt.title('filtered')
 spec_img = frequency2SpatialDomain(spec_img)
+plt.imshow(spec_img, cmap = 'gray')
+plt.show()
+
+plt.plot()
 plt.imshow(spec_img, cmap = 'gray')
 plt.show()
