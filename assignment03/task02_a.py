@@ -42,50 +42,59 @@ def filtering(image):
 	return image
 	
 
-def flood_fill(image, possitionX, possitionY, seedPointX, seedPointY, threshold, blackImage):
+def flood_fill(image, possitionX, possitionY, seedPointX, seedPointY, threshold, canvas):
 	
 	if (possitionX < 1 or possitionY < 1):
-		print("kant")
-		return blackImage
-	
-	if (image(possitionY,possitionX) == blackImage(possitionY,possitionX)):
-		return blackImage
-	
-	
-	if (np.abs(image(possitionY, possitionX)-image(seedPointY, seedPointX))<threshold):
-		blackImage[possitionY, possitionX] = image(possitionY, possitionX)
-		print("sett svart")
-		return blackImage
 		
-	blackImage = flood_fill(image, possitionX-1, possitionY-1, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX, possitionY-1, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX+1, possitionY-1, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX-1, possitionY, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX, possitionY, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX+1, possitionY, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX-1, possitionY+1, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX, possitionY+1, seedPointX, seedPointY, threshold, blackImage)
-	blackImage = flood_fill(image, possitionX+1, possitionY+1, seedPointX, seedPointY, threshold, blackImage)
+		return canvas
 	
-	return blackImage
+	if (image[possitionY,possitionX] == canvas[possitionY,possitionX]):
+		return canvas
+	
+	
+	if (np.abs(image[possitionY, possitionX]-image[seedPointY, seedPointX])<threshold):
+		canvas[possitionY, possitionX] = image[possitionY, possitionX]
+		
+		canvas = flood_fill(image, possitionX-1, possitionY-1, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX, possitionY-1, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX+1, possitionY-1, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX-1, possitionY, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX, possitionY, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX+1, possitionY, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX-1, possitionY+1, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX, possitionY+1, seedPointX, seedPointY, threshold, canvas)
+		canvas = flood_fill(image, possitionX+1, possitionY+1, seedPointX, seedPointY, threshold, canvas)
+	
+	return canvas
 
 image = misc.imread(imagePath['weld'])
 image = np.array(image, dtype=np.float32)
-image = image/255
 
 imageSeedPoint1 = image
-seedPoint1X = 140
-seedPoint1Y = 255
-threshold = 0.1
+seedPointX = 140
+seedPointY = 255
+threshold = 50
 
-print(np.size(image,0))
-print(np.size(image,1))
+canvas = np.zeros((np.size(image,0),np.size(image, 1)))
+canvas = flood_fill(image, seedPointX, seedPointY, seedPointX, seedPointY, threshold, canvas)
 
-blackImage = np.zeros((np.size(image,0),np.size(image, 1)))
-firstpoint = flood_fill(image, seedPoint1X, seedPoint1Y, seedPoint1X, seedPoint1Y, threshold, blackImage)
-print(blackImage)
+seedPointX = 294
+seedPointY = 252
+canvas = flood_fill(image, seedPointX, seedPointY, seedPointX, seedPointY, threshold, canvas)
 
-plt.imshow(firstpoint)
+seedPointX = 359
+seedPointY = 240
+canvas = flood_fill(image, seedPointX, seedPointY, seedPointX, seedPointY, threshold, canvas)
+
+seedPointX = 414
+seedPointY = 234
+canvas = flood_fill(image, seedPointX, seedPointY, seedPointX, seedPointY, threshold, canvas)
+
+seedPointX = 444
+seedPointY = 243
+canvas = flood_fill(image, seedPointX, seedPointY, seedPointX, seedPointY, threshold, canvas)
+
+plt.imshow(canvas)
 plt.gray()
 plt.show()
 
