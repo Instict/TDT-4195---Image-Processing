@@ -125,7 +125,7 @@ threshold = 127
 binaryImage = makeBinaryImage(image, threshold)
 
 ##Burde vere oddetall for best effekt
-kernelSize = 13
+kernelSize = 15
 
 kernel = createKernel(kernelSize)
 
@@ -146,17 +146,21 @@ plt.title('Eroded image')
 plt.imshow(erodedImage, cmap = 'gray',  interpolation='nearest')
 
 ##Burde vere oddetall for best effekt
-kernel = createKernel(25)
+kernel = createKernel(17)
 
-for i in range (1):
+for i in range (2):
 	deflatedImage = deflation(deflatedImage, kernel)
 
+kernel = createKernel(15)
+deflatedImage = erosion(deflatedImage, kernel)
+	
 plt.subplot(133)
 plt.axis('off')
 plt.title('Closed image')
 plt.imshow(deflatedImage, cmap = 'gray',  interpolation='nearest')
-
 plt.show()
 
+plt.axis('off')
 plt.imshow(deflatedImage, cmap = 'gray',  interpolation='nearest')
+misc.imsave('outfile.tiff', deflatedImage)
 plt.show()

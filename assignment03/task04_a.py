@@ -10,22 +10,10 @@ imagePath = {'yeast' : './images/Fig1043(a)(yeast_USC).tiff',
 			'task5one' : './images/task5-01.tiff',
 			'task5two' : './images/task5-02.tiff',
 			'task5three' : './images/task5-03.tiff',
-			'noisless' : './images/noisless.png}'}
+			'noisless' : './images/noisless.tiff'}
 
-def makeBinaryImage(image, threshold):
 
-	yImage = np.size(image, 0)
-	xImage = np.size(image, 1)
-	
-	binaryImage = np.zeros((yImage,xImage), dtype = 'bool')
-	
-	for y in range(yImage):
-		for x in range(xImage):
-			if(image[y,x] > threshold):
-				binaryImage[y,x] = 1	
-				
-	return binaryImage
-	
+			
 def erosion(image, kernel):
 	
 	yImage = np.size(image, 0)
@@ -61,11 +49,25 @@ def travaserErosion(image, x, y, kernel):
 						return 0
 	return 1
 	
-def boundary(image, erodedImage)
+def boundary(image, erodedImage):
 	
-	boundaryImage = image - erodedImage
+	yImage = np.size(image, 0)
+	xImage = np.size(image, 1)
 	
-	retun boundaryImage
+	boundaryImage = np.full((yImage,xImage),0)
+	boundaryImage = boundaryImage.astype(bool)
+	
+	for y in range(yImage):
+		for x in range(xImage):
+			if(image[y,x]==erodedImage[y,x]):
+				boundaryImage[y,x]=False
+			else:
+				boundaryImage[y,x]=True
+			
+	return boundaryImage
+	
+	
+	
 	
 kernel =  np.array([
   [1, 1, 1],
@@ -75,14 +77,17 @@ kernel =  np.array([
 	
 image = misc.imread(imagePath['noisless'])
 image = np.array(image, dtype=np.float32)
+print(image.shape)
+
 
 threshold = 127
 
-binaryImage = makeBinaryImage(image, threshold)
+binaryImage = image
+binaryImage = binaryImage.astype(bool)
 
 erodedImage = erosion(binaryImage, kernel)
 
-boundaryImage = boundary(image, erodedImage)
+boundaryImage = boundary(binaryImage, erodedImage)
 
 plt.subplot(131)
 plt.axis('off')
@@ -94,7 +99,7 @@ plt.title('Eroded image')
 plt.imshow(erodedImage, cmap = 'gray',  interpolation='nearest')
 plt.subplot(133)
 plt.axis('off')
-plt.title('Closed image')
+plt.title('boundary image')
 plt.imshow(boundaryImage, cmap = 'gray',  interpolation='nearest')
 
 plt.show()
