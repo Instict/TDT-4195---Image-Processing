@@ -59,46 +59,37 @@ def removingNoise(image):
 	canvas = ndimage.binary_closing(canvas, kernel, iterations=1)
 	return canvas
 
-def findFigure(image):
 
+#	this is not optimal, this function is REALLY slow
+def findFigure(image):
 	yImage = np.size(image, 0)
 	xImage = np.size(image, 1)
-
 	canvas = np.full((yImage,xImage),0)
 	canvas.astype('int')
 	label=0
 	for y in range(yImage):
-		
+
 		for x in range(xImage):
 			if (image[y,x]==0):
 				canvas[y,x]=0
 			else:
 				if(canvas[y-1,x]==0 and canvas[y,x-1]==0):
-					
 					canvas[y,x]=label+ 1
-					
 				elif(canvas[y-1,x]!=0 and canvas[y,x-1]==0):
 					canvas[y,x]=canvas[y-1,x]
-				
 				elif(canvas[y,x-1]!=0 and canvas[y-1,x]==0):
 					canvas[y,x] = canvas[y,x-1]
-					
 				elif(canvas[y,x-1]!=0 and canvas[y-1,x]!=0):
 					canvas[y,x]=canvas[y,x-1]
 					label=canvas[y,x]
 					temp=canvas[y-1,x]
-					
 					for tempY in range(yImage):
 						for tempX in range(xImage):
 							if(canvas[tempY,tempX]==temp):
 								canvas[tempY,tempX]=label
 					label=canvas[y,x]
-					
-					
-					
-				
-
 	return canvas
+
 
 image = misc.imread(imagePath['task5three'])
 originalImage = image
@@ -113,7 +104,7 @@ canvas = findFigure(binaryImage)
 plt.subplot(121)
 plt.axis('off')
 plt.title('Original image')
-plt.imshow(binaryImage)
+plt.imshow(binaryImage, cmap = 'gray', interpolation = 'nearest')
 plt.subplot(122)
 plt.axis('off')
 plt.title('Binary image')

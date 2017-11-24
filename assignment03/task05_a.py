@@ -60,7 +60,7 @@ def removingNoise(image):
 	return canvas
 
 
-image = misc.imread(imagePath['task5three'])
+image = misc.imread(imagePath['task5two'])
 originalImage = image
 
 (color1, color2) = detectChessColor(image)
