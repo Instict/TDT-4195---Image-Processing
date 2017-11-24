@@ -60,38 +60,7 @@ def removingNoise(image):
 	return canvas
 
 
-#	this is not optimal, this function is REALLY slow
-def findFigure(image):
-	yImage = np.size(image, 0)
-	xImage = np.size(image, 1)
-	canvas = np.full((yImage,xImage),0)
-	canvas.astype('int')
-	label=0
-	for y in range(yImage):
-
-		for x in range(xImage):
-			if (image[y,x]==0):
-				canvas[y,x]=0
-			else:
-				if(canvas[y-1,x]==0 and canvas[y,x-1]==0):
-					canvas[y,x]=label+ 1
-				elif(canvas[y-1,x]!=0 and canvas[y,x-1]==0):
-					canvas[y,x]=canvas[y-1,x]
-				elif(canvas[y,x-1]!=0 and canvas[y-1,x]==0):
-					canvas[y,x] = canvas[y,x-1]
-				elif(canvas[y,x-1]!=0 and canvas[y-1,x]!=0):
-					canvas[y,x]=canvas[y-1,x]
-					label=canvas[y,x]
-					temp=canvas[y,x-1]
-					for tempY in range(yImage):
-						for tempX in range(xImage):
-							if(canvas[tempY,tempX]==temp):
-								canvas[tempY,tempX]=label
-					label=canvas[y,x]
-	return canvas
-
-
-image = misc.imread(imagePath['task5three'])
+image = misc.imread(imagePath['task5two'])
 originalImage = image
 
 (color1, color2) = detectChessColor(image)
@@ -99,19 +68,13 @@ originalImage = image
 binaryImage = removeChessBoard(image, color1, color2)
 binaryImage = removingNoise(binaryImage)
 
-canvas, nrobjects = ndimage.label(binaryImage)
-
-#	only run this if you feel lucky punk!
-# canvas = findFigure(binaryImage)
-
-
 plt.subplot(121)
 plt.axis('off')
 plt.title('Original image')
-plt.imshow(binaryImage, cmap = 'gray', interpolation = 'nearest')
+plt.imshow(originalImage)
 plt.subplot(122)
 plt.axis('off')
 plt.title('Binary image')
-plt.imshow(canvas, cmap = 'gray',  interpolation='nearest')
+plt.imshow(binaryImage, cmap = 'gray',  interpolation='nearest')
 
 plt.show()
